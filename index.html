@@ -1075,16 +1075,18 @@ textarea.form-input { resize: vertical; min-height: 110px; }
     </div>
     <div class="contact-form-box reveal">
       <div class="form-title">Kirim Pesan</div>
-      <form id="contactForm" onsubmit="submitForm(event)">
+      <form id="contactForm" action="https://formsubmit.co/faridyudhapratama1@gmail.com" method="POST">
+        <input type="hidden" name="_captcha" value="true">
+        <input type="hidden" name="_next" value="index.html#contact">
         <div class="form-row2">
-          <div class="form-group"><label class="form-label">Nama Depan</label><input id="firstName" type="text" class="form-input" placeholder="Nama Depan" required></div>
-          <div class="form-group"><label class="form-label">Nama Belakang</label><input id="lastName" type="text" class="form-input" placeholder="Nama Belakang" required></div>
+          <div class="form-group"><label class="form-label">Nama Depan</label><input id="firstName" name="first_name" type="text" class="form-input" placeholder="Nama Depan" required></div>
+          <div class="form-group"><label class="form-label">Nama Belakang</label><input id="lastName" name="last_name" type="text" class="form-input" placeholder="Nama Belakang" required></div>
         </div>
-        <div class="form-group"><label class="form-label">Email</label><input id="senderEmail" type="email" class="form-input" placeholder="@gmail.com" required></div>
-        <div class="form-group"><label class="form-label">Subjek</label><input id="subject" type="text" class="form-input" placeholder="Subjek" required></div>
-        <div class="form-group"><label class="form-label">Pesan</label><textarea id="message" class="form-input" placeholder="Tambahkan..." required></textarea></div>
+        <div class="form-group"><label class="form-label">Email</label><input id="senderEmail" name="email" type="email" class="form-input" placeholder="@gmail.com" required></div>
+        <div class="form-group"><label class="form-label">Subjek</label><input id="subject" name="_subject" type="text" class="form-input" placeholder="Subjek" required></div>
+        <div class="form-group"><label class="form-label">Pesan</label><textarea id="message" name="message" class="form-input" placeholder="Tambahkan..." required></textarea></div>
         <button class="form-btn" type="submit"><i class="fa fa-paper-plane"></i>&nbsp; Kirim Pesan</button>
-        <div class="form-success" id="formSuccess"><i class="fa fa-check-circle" style="font-size:2rem;display:block;margin-bottom:8px"></i>Aplikasi email akan terbuka. Silakan klik Kirim untuk mengirim pesan.</div>
+        <div class="form-success" id="formSuccess"><i class="fa fa-check-circle" style="font-size:2rem;display:block;margin-bottom:8px"></i>Pesan terkirim! Terima kasih.</div>
       </form>
     </div>
   </div>
@@ -1103,13 +1105,6 @@ textarea.form-input { resize: vertical; min-height: 110px; }
 </div>
 
 <button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa fa-arrow-up"></i></button>
-
-<!-- ===== EMAILJS SDK ===== -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  // Ganti dengan Public Key dari EmailJS → Account → General
-  emailjs.init('r-4isYwA94vPhaNnq');
-</script>
 
 <script>
 // ===== EXPERIENCE DATA =====
@@ -1161,35 +1156,6 @@ function toggleAbout() {
   txt.textContent=el.classList.contains('open')?'Tampilkan Lebih Sedikit':'Pelajari Lebih Lanjut';
 }
 function scrollContact() { document.getElementById('contact').scrollIntoView({behavior:'smooth'}); }
-function submitForm(e) {
-  if(e) e.preventDefault();
-  const firstName   = document.getElementById('firstName')?.value?.trim()    || '';
-  const lastName    = document.getElementById('lastName')?.value?.trim()     || '';
-  const senderEmail = document.getElementById('senderEmail')?.value?.trim()  || '';
-  const subject     = document.getElementById('subject')?.value?.trim()      || 'Pesan dari Website CV';
-  const message     = document.getElementById('message')?.value?.trim()      || '';
-  const btn = document.querySelector('.form-btn');
-  const ok  = document.getElementById('formSuccess');
-  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Mengirim...'; }
-  emailjs.send(
-    'GANTI_SERVICE_ID',    // ← Ganti dengan Service ID dari EmailJS
-    'GANTI_TEMPLATE_ID',   // ← Ganti dengan Template ID dari EmailJS
-    {
-      from_name:  `${firstName} ${lastName}`.trim(),
-      from_email: senderEmail,
-      subject:    subject,
-      message:    message,
-    }
-  ).then(() => {
-    if(ok){ ok.style.display='block'; ok.innerHTML='<i class="fa fa-check-circle" style="font-size:2rem;display:block;margin-bottom:8px;color:#30d158"></i>Pesan berhasil terkirim! Terima kasih 🎉'; }
-    document.getElementById('contactForm').reset();
-    if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i>&nbsp; Kirim Pesan'; }
-  }).catch((err) => {
-    if(ok){ ok.style.display='block'; ok.style.color='#ff453a'; ok.innerHTML='<i class="fa fa-times-circle" style="font-size:2rem;display:block;margin-bottom:8px"></i>Gagal mengirim. Coba lagi nanti.'; }
-    console.error('EmailJS error:', err);
-    if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i>&nbsp; Kirim Pesan'; }
-  });
-}
 document.getElementById('hamburger').onclick=()=>document.getElementById('mobileNav').classList.add('open');
 document.getElementById('mobileClose').onclick=closeMobile;
 function closeMobile(){document.getElementById('mobileNav').classList.remove('open');}
