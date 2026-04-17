@@ -1104,6 +1104,13 @@ textarea.form-input { resize: vertical; min-height: 110px; }
 
 <button class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa fa-arrow-up"></i></button>
 
+<!-- ===== EMAILJS SDK ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // Ganti dengan Public Key dari EmailJS → Account → General
+  emailjs.init('GANTI_PUBLIC_KEY');
+</script>
+
 <script>
 // ===== EXPERIENCE DATA =====
 const expData = {
@@ -1156,25 +1163,32 @@ function toggleAbout() {
 function scrollContact() { document.getElementById('contact').scrollIntoView({behavior:'smooth'}); }
 function submitForm(e) {
   if(e) e.preventDefault();
-  const firstName=document.getElementById('firstName')?.value?.trim()||'';
-  const lastName=document.getElementById('lastName')?.value?.trim()||'';
-  const senderEmail=document.getElementById('senderEmail')?.value?.trim()||'';
-  const subject=document.getElementById('subject')?.value?.trim()||'Pesan dari Website CV';
-  const message=document.getElementById('message')?.value?.trim()||'';
-  const to='faridyudhapratama1@gmail.com';
-  const body=[
-    `Nama: ${[firstName,lastName].filter(Boolean).join(' ')}`,
-    `Email: ${senderEmail}`,
-    '',
-    message
-  ].join('\n');
-  const mailto=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  const btn=document.querySelector('.form-btn');
-  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Membuka Email...'; }
-  window.location.href=mailto;
-  const ok=document.getElementById('formSuccess');
-  if(ok) ok.style.display='block';
-  if(btn){ setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i>&nbsp; Kirim Pesan'; },1200); }
+  const firstName   = document.getElementById('firstName')?.value?.trim()    || '';
+  const lastName    = document.getElementById('lastName')?.value?.trim()     || '';
+  const senderEmail = document.getElementById('senderEmail')?.value?.trim()  || '';
+  const subject     = document.getElementById('subject')?.value?.trim()      || 'Pesan dari Website CV';
+  const message     = document.getElementById('message')?.value?.trim()      || '';
+  const btn = document.querySelector('.form-btn');
+  const ok  = document.getElementById('formSuccess');
+  if(btn){ btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Mengirim...'; }
+  emailjs.send(
+    'GANTI_SERVICE_ID',    // ← Ganti dengan Service ID dari EmailJS
+    'GANTI_TEMPLATE_ID',   // ← Ganti dengan Template ID dari EmailJS
+    {
+      from_name:  `${firstName} ${lastName}`.trim(),
+      from_email: senderEmail,
+      subject:    subject,
+      message:    message,
+    }
+  ).then(() => {
+    if(ok){ ok.style.display='block'; ok.innerHTML='<i class="fa fa-check-circle" style="font-size:2rem;display:block;margin-bottom:8px;color:#30d158"></i>Pesan berhasil terkirim! Terima kasih 🎉'; }
+    document.getElementById('contactForm').reset();
+    if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i>&nbsp; Kirim Pesan'; }
+  }).catch((err) => {
+    if(ok){ ok.style.display='block'; ok.style.color='#ff453a'; ok.innerHTML='<i class="fa fa-times-circle" style="font-size:2rem;display:block;margin-bottom:8px"></i>Gagal mengirim. Coba lagi nanti.'; }
+    console.error('EmailJS error:', err);
+    if(btn){ btn.disabled=false; btn.innerHTML='<i class="fa fa-paper-plane"></i>&nbsp; Kirim Pesan'; }
+  });
 }
 document.getElementById('hamburger').onclick=()=>document.getElementById('mobileNav').classList.add('open');
 document.getElementById('mobileClose').onclick=closeMobile;
